@@ -6,7 +6,7 @@ from enum import Enum
 
 pygame.init()
 
-GRID = 25
+GRID = 50
 SCREEN_WIDTH = 16
 SCREEN_HEIGHT = 16
 SCREEN_SIZE = (SCREEN_WIDTH * GRID, SCREEN_HEIGHT * GRID)
@@ -47,23 +47,22 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                player_pos = pygame.Vector2(START_X * GRID, START_Y * GRID)
-                player_positions = []
-                player_direction = Direction.EAST
-                length = 3
-                score = 0
-                start_time = time.time()
-                apple_pos = pygame.Vector2(random.randrange(SCREEN_WIDTH) * GRID, random.randrange(SCREEN_HEIGHT) * GRID)
-                playing = True
-                dt = 0
-                if multiplayer:
-                    player2_pos = pygame.Vector2(START_X * GRID + (2 * GRID), START_Y * GRID + (2 * GRID))
-                    player2_positions = []
-                    player2_direction = Direction.WEST
-                    length2 = 3
-                    dt2 = 0
+        if pygame.mouse.get_pressed()[0] or (event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE):
+            player_pos = pygame.Vector2(START_X * GRID, START_Y * GRID)
+            player_positions = []
+            player_direction = Direction.EAST
+            length = 3
+            score = 0
+            start_time = time.time()
+            apple_pos = pygame.Vector2(random.randrange(SCREEN_WIDTH) * GRID, random.randrange(SCREEN_HEIGHT) * GRID)
+            playing = True
+            dt = 0
+            if multiplayer:
+                player2_pos = pygame.Vector2(START_X * GRID + (2 * GRID), START_Y * GRID + (2 * GRID))
+                player2_positions = []
+                player2_direction = Direction.WEST
+                length2 = 3
+                dt2 = 0
 
 
     while playing:
@@ -112,7 +111,7 @@ while running:
 
             if player_pos in player_positions or player_pos in player2_positions:
                 playing = False
-            elif player_pos == apple_pos:
+            elif player_pos == apple_pos or apple_pos in player_positions:
                 apple_pos = pygame.Vector2(random.randrange(SCREEN_WIDTH) * GRID, random.randrange(SCREEN_HEIGHT) * GRID)
                 while apple_pos in player_positions or apple_pos in player2_positions:
                     apple_pos = pygame.Vector2(random.randrange(SCREEN_WIDTH) * GRID, random.randrange(SCREEN_HEIGHT) * GRID)
@@ -148,17 +147,17 @@ while running:
 
                 if player2_pos in player2_positions or player2_pos in player_positions:
                     playing = False
-                elif player2_pos == apple_pos:
+                elif player2_pos == apple_pos or apple_pos in player2_positions:
                     apple_pos = pygame.Vector2(random.randrange(SCREEN_WIDTH) * GRID, random.randrange(SCREEN_HEIGHT) * GRID)
                     while apple_pos in player_positions or apple_pos in player2_positions:
                         apple_pos = pygame.Vector2(random.randrange(SCREEN_WIDTH) * GRID, random.randrange(SCREEN_HEIGHT) * GRID)
-                    length += 1
+                    length2 += 1
                     score += 1
                     if score > high_score:
                         high_score = score
 
                 player2_positions.insert(0, pygame.Vector2(int(player2_pos.x) % (SCREEN_WIDTH * GRID), int(player2_pos.y) % (SCREEN_HEIGHT * GRID)))
-                player2_positions = player2_positions[0:length]
+                player2_positions = player2_positions[0:length2]
 
             for i, position in enumerate(player2_positions):
                 if i == 0:
