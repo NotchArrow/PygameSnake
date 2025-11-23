@@ -162,7 +162,7 @@ class SnakeGame:
                     direction = Direction.EAST
                 else:
                     direction = Direction.WEST
-                self.snakes.append(Snake(pygame.Vector2(self.GRID * i, self.GRID * i), direction, 20,
+                self.snakes.append(Snake(pygame.Vector2(self.GRID * i, self.GRID * i), direction, 3,
                                          data[0], data[1]))
         for i in range(self.appleCount):
             self.apples.append(Apple(self))
