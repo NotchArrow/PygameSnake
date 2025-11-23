@@ -63,12 +63,10 @@ class Snake:
             if apple.position == self.positions[0]:
                 if apple.golden:
                     self.length += 5
-                    game.score += 5
                     if self.speed > 1:
                         self.speed -= 1
                 else:
                     self.length += 1
-                    game.score += 1
                 apple.move(game)
 
     def draw(self, game):
@@ -123,6 +121,9 @@ class Apple:
                 for snake in snakeBonus:
                     snake.length += 1
                 self.move(game)
+                for snake in set(snakeBonus):
+                    if snake.speed < 8:
+                        snake.speed += 1
 
     def draw(self, game):
         size = game.GRID * self.shrink
@@ -169,6 +170,11 @@ class SnakeGame:
 
         while running:
             self.screen.fill((0, 0, 0))
+
+            self.score = 0
+            for snake in self.snakes:
+                self.score += snake.length
+
             pygame.display.set_caption(f"Snake | Score: {self.score}")
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
