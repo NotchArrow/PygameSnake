@@ -71,7 +71,7 @@ class Snake:
 
     def draw(self, game):
         for seg, pos in enumerate(self.positions):
-            gradient = 50 * seg ** .5
+            gradient = game.gradientDecline * seg ** .5
             segColor = (max(self.color[0] * .5, self.color[0] - gradient),
                         max(self.color[1] * .5, self.color[1] - gradient),
                         max(self.color[2] * .5, self.color[2] - gradient))
@@ -85,7 +85,6 @@ class Apple:
                                        random.randrange(game.SCREEN_HEIGHT) * game.GRID)
         self.shrink = 0.8
         self.golden = False
-        self.goldenChance = .1
 
     def move(self, game):
         validLocation = False
@@ -96,7 +95,7 @@ class Apple:
                 if self.position in snake.positions:
                     validLocation = False
 
-        self.golden = random.random() < self.goldenChance
+        self.golden = random.random() < game.goldenChance
 
     def delGolden(self, game):
         if self.golden:
@@ -145,6 +144,7 @@ class SnakeGame:
         self.SCREEN_HEIGHT = SCREEN_HEIGHT
         self.SCREEN_SIZE = (self.SCREEN_WIDTH * self.GRID, self.SCREEN_HEIGHT * self.GRID)
         self.screen = pygame.display.set_mode(self.SCREEN_SIZE)
+        self.backgroundColor = (0, 0, 0)
 
         self.appleCount = appleCount
         self.apples = []
@@ -152,6 +152,10 @@ class SnakeGame:
         self.snakes = []
         self.snakeData = snakeData
         self.score = 0
+
+        self.gradientDecline = 25
+        self.goldenChance = 0.1
+        self.appleInc = -1
 
     def run(self):
         clock = pygame.time.Clock()
@@ -169,11 +173,17 @@ class SnakeGame:
             self.apples.append(Apple(self))
 
         while running:
-            self.screen.fill((0, 0, 0))
+            self.screen.fill(self.backgroundColor)
 
             self.score = 0
             for snake in self.snakes:
                 self.score += snake.length
+            
+            if int(self.score / self.appleInc) >= self.appleCount:
+                self.apples.append(Apple(self))
+                self.appleCount += 1
+            
+            self.apples = self.apples[:self.appleCount]
 
             pygame.display.set_caption(f"Snake | Score: {self.score}")
             for event in pygame.event.get():
@@ -210,7 +220,7 @@ class SnakeGame:
 
 
 snakeGame = SnakeGame(
-    30, 24, 24,
+    30, 20, 20,
     1, 1,
 
     [([pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d], (0, 255, 0)),
@@ -218,4 +228,5 @@ snakeGame = SnakeGame(
      ([pygame.K_i, pygame.K_k, pygame.K_j, pygame.K_l], (200, 0, 200)),
      ([pygame.K_t, pygame.K_g, pygame.K_f, pygame.K_h], (200, 200, 200))]
 )
+#snakeGame.backgroundColor = (0, 0, 255)
 snakeGame.run()
