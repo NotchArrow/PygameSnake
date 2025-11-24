@@ -129,9 +129,9 @@ class Apple:
         offset = (game.GRID - size) / 2
 
         if self.golden:
-            color = (255, 255, 0)
+            color = game.goldenAppleColor
         else:
-            color = (255, 0, 0)
+            color = game.appleColor
 
         pygame.draw.rect(game.screen, color, pygame.Rect(self.position.x + offset, self.position.y + offset, size, size))
 
@@ -144,7 +144,10 @@ class SnakeGame:
         self.SCREEN_HEIGHT = SCREEN_HEIGHT
         self.SCREEN_SIZE = (self.SCREEN_WIDTH * self.GRID, self.SCREEN_HEIGHT * self.GRID)
         self.screen = pygame.display.set_mode(self.SCREEN_SIZE)
+
         self.backgroundColor = (0, 0, 0)
+        self.appleColor = (255, 0, 0)
+        self.goldenAppleColor = (255, 255, 0)
 
         self.appleCount = appleCount
         self.apples = []
@@ -156,6 +159,7 @@ class SnakeGame:
         self.gradientDecline = 25
         self.goldenChance = 0.1
         self.appleInc = -1
+        self.startLength = 3
 
     def run(self):
         clock = pygame.time.Clock()
@@ -167,7 +171,7 @@ class SnakeGame:
                     direction = Direction.EAST
                 else:
                     direction = Direction.WEST
-                self.snakes.append(Snake(pygame.Vector2(self.GRID * i, self.GRID * i), direction, 3,
+                self.snakes.append(Snake(pygame.Vector2(self.GRID * i, self.GRID * i), direction, self.startLength,
                                          data[0], data[1]))
         for i in range(self.appleCount):
             self.apples.append(Apple(self))
@@ -223,10 +227,14 @@ snakeGame = SnakeGame(
     30, 20, 20,
     1, 1,
 
-    [([pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d], (0, 255, 0)),
-     ([pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT], (200, 200, 0)),
+    [([pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d], (0, 200, 200)),
+     ([pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT], (100, 100, 200)),
      ([pygame.K_i, pygame.K_k, pygame.K_j, pygame.K_l], (200, 0, 200)),
-     ([pygame.K_t, pygame.K_g, pygame.K_f, pygame.K_h], (200, 200, 200))]
+     ([pygame.K_t, pygame.K_g, pygame.K_f, pygame.K_h], (150, 150, 200))]
 )
-#snakeGame.backgroundColor = (0, 0, 255)
+
+snakeGame.backgroundColor = (0, 0, 30)
+snakeGame.appleColor = (0, 0, 255)
+snakeGame.goldenAppleColor = (0, 255, 255)
+
 snakeGame.run()
